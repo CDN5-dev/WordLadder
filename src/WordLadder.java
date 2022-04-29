@@ -79,6 +79,52 @@ public class WordLadder {
         }
     }
 
+
+    /**
+     * This method searches the wordlist as a graph by performing a breadth first search on the graph
+     *  to find the shortest path from start to end. Graph is built on-the-fly to find the first occurrence of the
+     *  shortest path to end word.
+     *  If no path is found, returns null.
+     *  If a path is found, returns the path.
+     *  If the start or end words are not in the graph, returns null.
+     * @param words - the graph
+     * @param beginWord - the start node
+     * @param endWord - the end node (i.e. target word)
+     * @return the path from start to end
+     */
+    private static LinkedList<String> breadthFirstSearch(HashMap<String, LinkedList<String>> words, String beginWord, String endWord) {
+        Queue<String> queue = new LinkedList<>();           // queue to hold words
+        Map<String, Integer> numSteps = new HashMap<>();    // map to hold distance from beginWord
+        queue.add(beginWord);                               // add beginWord to queue
+        numSteps.put(beginWord, 0);                         // set distance of beginWord to 0
+        // continue until search is completed or path is found
+        while (!queue.isEmpty()) {                          // while queue is not empty
+            int size = queue.size();
+            for (int i = 0; i < size; i++) {
+                String currentWord = queue.poll();          // get word from queue
+                if (currentWord != null) {
+                    //get neighbours and add to hashmap set to build out graph
+                    LinkedList<String> neighbours = getNeighbours(currentWord, words);
+                    words.put(currentWord, neighbours);                             // add neighbours to hashmap
+                    // break and return if path found
+                    if (currentWord.equals(endWord)) {
+                        return traverseLadder(currentWord, words, numSteps);       // return path
+                    } else {                                                       // else continue search
+                        for (String each : neighbours) {                           // for each neighbour
+                            if (!numSteps.containsKey(each)) {                     // if neighbour not in distance map
+                                queue.add(each);                                   // add neighbour to queue
+                                numSteps.put(each, numSteps.get(currentWord) + 1); // set distance of neighbour to distance of currentWord + 1
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+
     /**
      * this method constructs a list that returns a list of all the words that are one letter away from the given word
      *
@@ -142,7 +188,7 @@ public class WordLadder {
         } else {                                                            // if there is no path
             System.out.print("No word ladder found");                       // print error message
         }
-        return pathToTarget;// return the path
+        return pathToTarget;                                                // return the path
     }
 
 
@@ -165,51 +211,6 @@ public class WordLadder {
         }
         return print;
     }
-
-    /**
-     * This method searches the wordlist as a graph by performing a breadth first search on the graph
-     *  to find the shortest path from start to end. Graph is built on-the-fly to find the first occurrence of the
-     *  shortest path to end word.
-     *  If no path is found, returns null.
-     *  If a path is found, returns the path.
-     *  If the start or end words are not in the graph, returns null.
-     * @param words - the graph
-     * @param beginWord - the start node
-     * @param endWord - the end node (i.e. target word)
-     * @return the path from start to end
-     */
-    private static LinkedList<String> breadthFirstSearch(HashMap<String, LinkedList<String>> words, String beginWord, String endWord) {
-        Queue<String> queue = new LinkedList<>();           // queue to hold words
-        Map<String, Integer> numSteps = new HashMap<>();    // map to hold distance from beginWord
-        queue.add(beginWord);                               // add beginWord to queue
-        numSteps.put(beginWord, 0);                         // set distance of beginWord to 0
-        // continue until search is completed or path is found
-        while (!queue.isEmpty()) {                          // while queue is not empty
-            int size = queue.size();
-            for (int i = 0; i < size; i++) {
-                String currentWord = queue.poll();                 // get word from queue
-                if (currentWord != null) {
-                    //get neighbours and add to hashmap set to build out graph
-                    LinkedList<String> neighbours = getNeighbours(currentWord, words);
-                    words.put(currentWord, neighbours);                             // add neighbours to hashmap
-                    // break and return if path found
-                    if (currentWord.equals(endWord)) {
-                        return traverseLadder(currentWord, words, numSteps);       // return path
-                    } else {                                                // else continue search
-                        for (String each : neighbours) {                     // for each neighbour
-                            if (!numSteps.containsKey(each)) {              // if neighbour not in distance map
-                                queue.add(each);                            // add neighbour to queue
-                                numSteps.put(each, numSteps.get(currentWord) + 1); // set distance of neighbour to distance of currentWord + 1
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return null;
-    }
-
 }
 
 

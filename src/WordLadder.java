@@ -87,25 +87,29 @@ public class WordLadder {
      * @return - list of words 1 letter away
      */
     private static LinkedList<String> getNeighbours(String currentWord, HashMap<String, LinkedList<String>> words) {
-        LinkedList<String> visited = new LinkedList<>();   // list of neighbours to be returned
-        char[] chars = currentWord.toCharArray();          // array of characters in the current word
-        Set<String> wordSet = words.keySet();              // set of all words in the wordlist
+        LinkedList<String> visited = new LinkedList<>();    // list of neighbours to be returned
+        StringBuffer sb = new StringBuffer(currentWord);    // string buffer to hold the current word
+        //char[] chars = currentWord.toCharArray();         // array of characters in the current word
+        Set<String> wordSet = words.keySet();               // set of all words in the wordlist
         // parse through the array
-        for (int i = 0; i < chars.length; i++) {
-            char ogChar = chars[i];                         // save the original character off in a temp variable
+        for (int i = 0; i < sb.length(); i++) {
+            //char ogChar = chars[i];
+            char temp = sb.charAt(i);                       //save the original character off in a temp variable
             for (char ch = 'a'; ch <= 'z'; ch++) {          // loop through all the letters in alphabet
-                if (ch == ogChar) {                         // if the current letter is the same as the original letter, skip it
+                if (ch == temp) {                           // if the current letter is the same as the original letter, skip it
                     continue;
                 }
-                chars[i] = ch;                              // change the current letter to the next letter in the alphabet
-                String nextWord = String.valueOf(chars);    // convert the array of characters to a string
-                if (wordSet.contains(nextWord)) {           // if the word is in the wordlist, add it to the neighbours list
-                    visited.add(nextWord);                  // add the word to the neighbours list
+                //chars[i] = ch;                                    // change the current letter to the next letter in the alphabet
+                sb.replace(i, i + 1, Character.toString(ch));  // replace the current letter with the next letter in alphabet
+                //String nextWord = String.valueOf(chars);          // convert the array of characters to a string
+                if (wordSet.contains(sb.toString())) {              // if the word is in the wordlist, add it to the neighbours list
+                    visited.add(sb.toString());                     // add the word to the neighbours list
                 }
             }
-            chars[i] = ogChar;                              // reset the current letter to the original character (i.e. letter)
+            sb.replace(i, i + 1, Character.toString(temp));    // replace the current letter with the original letter
+            //chars[i] = ogChar;                                    // reset the current letter to the original character (i.e. letter)
         }
-        return visited;                                     // return the neighbours list
+        return visited;                                             // return the neighbours list
     }
 
     /**
@@ -113,19 +117,19 @@ public class WordLadder {
      *
      * @param beginWord - the word to start the search from
      * @param words     - the hashmap of words to search through
-     * @param distance  - the distance from the start word to the end word
+     * @param numSteps  - the distance from the start word to the end word
      * @return the path from the start word to the end word
      */
-    private static LinkedList<String> traverseLadder(String beginWord, HashMap<String, LinkedList<String>> words, Map<String, Integer> distance) {
+    private static LinkedList<String> traverseLadder(String beginWord, HashMap<String, LinkedList<String>> words, Map<String, Integer> numSteps) {
         String currentWord = beginWord;                                // current word to be processed (starting with beginWord)
         LinkedList<String> pathToTarget = new LinkedList<>();          // path to return - if path exists
         pathToTarget.add(currentWord);                                 // add the current word to the path
         // while not at start node, find a node that is closer and move back to it.
-        while (distance.get(currentWord) != 0) {
+        while (numSteps.get(currentWord) != 0) {
             LinkedList<String> neighbours = words.get(currentWord);       // get the neighbors of the current word
             for (String each : neighbours) {                              // iterate through the neighbors
-                if (distance.get(each) != null) {
-                    if (distance.get(each) < distance.get(currentWord)) { // if the neighbor is closer
+                if (numSteps.get(each) != null) {
+                    if (numSteps.get(each) < numSteps.get(currentWord)) { // if the neighbor is closer
                         currentWord = each;                               // move to the neighbor
                         pathToTarget.add(currentWord);                    // add the neighbor to the path
                         break;                                            // break out of the loop
@@ -176,9 +180,9 @@ public class WordLadder {
      */
     private static LinkedList<String> breadthFirstSearch(HashMap<String, LinkedList<String>> words, String beginWord, String endWord) {
         Queue<String> queue = new LinkedList<>();           // queue to hold words
-        Map<String, Integer> distance = new HashMap<>();    // map to hold distance from beginWord
+        Map<String, Integer> numSteps = new HashMap<>();    // map to hold distance from beginWord
         queue.add(beginWord);                               // add beginWord to queue
-        distance.put(beginWord, 0);                         // set distance of beginWord to 0
+        numSteps.put(beginWord, 0);                         // set distance of beginWord to 0
         // continue until search is completed or path is found
         while (!queue.isEmpty()) {                          // while queue is not empty
             int size = queue.size();
@@ -190,12 +194,12 @@ public class WordLadder {
                     words.put(currentWord, neighbours);                             // add neighbours to hashmap
                     // break and return if path found
                     if (currentWord.equals(endWord)) {
-                        return traverseLadder(currentWord, words, distance);       // return path
+                        return traverseLadder(currentWord, words, numSteps);       // return path
                     } else {                                                // else continue search
                         for (String each : neighbours) {                     // for each neighbour
-                            if (!distance.containsKey(each)) {              // if neighbour not in distance map
+                            if (!numSteps.containsKey(each)) {              // if neighbour not in distance map
                                 queue.add(each);                            // add neighbour to queue
-                                distance.put(each, distance.get(currentWord) + 1); // set distance of neighbour to distance of currentWord + 1
+                                numSteps.put(each, numSteps.get(currentWord) + 1); // set distance of neighbour to distance of currentWord + 1
                             }
                         }
                     }

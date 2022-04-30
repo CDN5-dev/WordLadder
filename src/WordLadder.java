@@ -126,7 +126,7 @@ public class WordLadder {
 
 
     /**
-     * this method constructs a list that returns a list of all the words that are one letter away from the given word
+     * This method constructs a list that returns a list of all the words that are one letter away from the given word
      *
      * @param currentWord  - the current word
      * @param words - the hashmap of words

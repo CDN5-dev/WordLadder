@@ -84,7 +84,7 @@ public class WordLadder {
      * This method searches the wordlist as a graph by performing a breadth first search on the graph
      *  to find the shortest path from start to end. Graph is built on-the-fly to find the first occurrence of the
      *  shortest path to end word.
-     *  If no path is found, returns null.
+     *  If no path is found,eturns null.
      *  If a path is found, returns the path.
      *  If the start or end words are not in the graph, returns null.
      * @param words - the graph
@@ -139,7 +139,6 @@ public class WordLadder {
         Set<String> wordSet = words.keySet();               // set of all words in the wordlist
         // parse through the array
         for (int i = 0; i < sb.length(); i++) {
-            //char ogChar = chars[i];
             char temp = sb.charAt(i);                       //save the original character off in a temp variable
             for (char ch = 'a'; ch <= 'z'; ch++) {          // loop through all the letters in alphabet
                 if (ch == temp) {                           // if the current letter is the same as the original letter, skip it
@@ -153,7 +152,6 @@ public class WordLadder {
                 }
             }
             sb.replace(i, i + 1, Character.toString(temp));    // replace the current letter with the original letter
-            //chars[i] = ogChar;                                    // reset the current letter to the original character (i.e. letter)
         }
         return visited;                                             // return the neighbours list
     }
@@ -190,7 +188,6 @@ public class WordLadder {
         }
         return pathToTarget;                                                // return the path
     }
-
 
     /**
      * printLadder Makes a copy of WordLadder, and prints the word ladder
